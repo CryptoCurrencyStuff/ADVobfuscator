@@ -15,7 +15,6 @@
 //
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Get latest version on https://github.com/andrivet/ADVobfuscator
 
 #ifndef MetaFSM_h
 #define MetaFSM_h
@@ -43,7 +42,7 @@ namespace msm = boost::msm;
 namespace mpl = boost::mpl;
 using namespace boost::msm::front;
 
-namespace andrivet { namespace ADVobfuscator {
+namespace obfuscator {
 
     // Same as void but can be instantiated
     struct Void {};
@@ -150,7 +149,7 @@ namespace andrivet { namespace ADVobfuscator {
 
     // Obfuscate the address of the target. Very simple implementation but enough to annoy IDA and Co.
     template<typename F>
-    struct ObfuscatedAddress
+    struct AddressFun
     {
         // Pointer to a function
         using func_ptr_t = void(*)();
@@ -160,14 +159,14 @@ namespace andrivet { namespace ADVobfuscator {
         func_ptr_integral f_;
         int offset_;
 
-        constexpr ObfuscatedAddress(F f, int offset): f_{reinterpret_cast<func_ptr_integral>(f) + offset}, offset_{offset} {}
+        constexpr AddressFun(F f, int offset): f_{reinterpret_cast<func_ptr_integral>(f) + offset}, offset_{offset} {}
         constexpr F original() const { return reinterpret_cast<F>(f_ - offset_); }
     };
 
-    // Create a instance of ObfuscatedFunc and deduce types
+    // Create a instance of Obfuscated Function and deduce types
     template<typename F>
-    constexpr ObfuscatedAddress<F> MakeObfuscatedAddress(F f, int offset) { return ObfuscatedAddress<F>(f, offset); }
+    constexpr AddressFun<F> MakeAddressFun(F f, int offset) { return AddressFun<F>(f, offset); }
 
-}}
+}
 
 #endif

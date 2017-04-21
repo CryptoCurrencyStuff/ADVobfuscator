@@ -15,7 +15,6 @@
 //
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Get latest version on https://github.com/andrivet/ADVobfuscator
 
 #ifndef MetaString1_h
 #define MetaString1_h
@@ -29,7 +28,7 @@
 // - Hard-coded key
 // - Hard-coded algorithm
 
-namespace andrivet { namespace ADVobfuscator {
+namespace obfuscator {
 
 // Represents an obfuscated string
 // Almost everything is compile-time
@@ -41,7 +40,15 @@ struct MetaString1
     // Constructor. Evaluated at compile time
     constexpr ALWAYS_INLINE MetaString1(const char* str)
     : buffer_ {encrypt(str[I])...} { }
-    
+
+    inline const char* encrypt()
+    {
+        for(size_t i = 0; i < sizeof...(I); ++i)
+            buffer_[i] = decrypt(buffer_[i]);
+        buffer_[sizeof...(I)] = 0;
+        return buffer_;
+    }
+ 
     // Runtime decryption. Most of the time, inlined
     inline const char* decrypt()
     {
@@ -53,7 +60,7 @@ struct MetaString1
 
 private:
     // Encrypt / decrypt a character of the original string
-    constexpr char encrypt(char c) const { return c ^ 0x55; }
+    constexpr char encrypt(char c) const { std::cout << (char)c << '>' << (char)(c^0x55) << '\n'; return c ^ 0x55; }
     constexpr char decrypt(char c) const { return encrypt(c); }
     
 private:
@@ -69,7 +76,7 @@ inline const char* operator "" _obfuscated1(const char* str, size_t)
 }
 #endif
     
-}}
+}
 
 // Alternative (prefix) notation
 #define OBFUSCATED1(str) (MetaString1<0, 1, 2, 3, 4, 5>(str).decrypt())

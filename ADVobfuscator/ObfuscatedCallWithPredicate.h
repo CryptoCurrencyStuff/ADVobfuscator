@@ -15,7 +15,6 @@
 //
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Get latest version on https://github.com/andrivet/ADVobfuscator
 
 #ifndef ObfuscatedCallWithPredicate_h
 #define ObfuscatedCallWithPredicate_h
@@ -26,7 +25,8 @@
 // Obfuscate function call with a finite state machine (FSM).
 // In this example, the execution of the FSM is combined with the checking of a predicate (is a debugger present or not).
 
-namespace andrivet { namespace ADVobfuscator { namespace Machine2 {
+namespace obfuscator { 
+namespace Machine2 {
 
     // Finite State Machine
     // E: Event associated with target
@@ -158,7 +158,8 @@ namespace andrivet { namespace ADVobfuscator { namespace Machine2 {
         int predicateCounter_ = predicateCounterInit_;
     };
 
-}}}
+}
+} // namespace
 
 // Warning: ##__VA_ARGS__ is not portable (only __VA_ARGS__ is). However, ##__VA_ARGS__ is far better (handles cases when it is empty) and supported by most compilers
 
@@ -167,14 +168,13 @@ namespace andrivet { namespace ADVobfuscator { namespace Machine2 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
 
-#define OBFUSCATED_CALL_P0(P, f) andrivet::ADVobfuscator::ObfuscatedCallP<andrivet::ADVobfuscator::Machine2::Machine, P>(MakeObfuscatedAddress(f, andrivet::ADVobfuscator::MetaRandom<__COUNTER__, 400>::value + 278))
-#define OBFUSCATED_CALL_RET_P0(R, P, f) andrivet::ADVobfuscator::ObfuscatedCallRetP<andrivet::ADVobfuscator::Machine2::Machine, P, R>(MakeObfuscatedAddress(f, andrivet::ADVobfuscator::MetaRandom<__COUNTER__, 400>::value + 278))
+#define OB_CALL_P0(P, f) obfuscator::ObfuscatedCallP<obfuscator::Machine2::Machine, P>(MakeAddressFun(f, obfuscator::MetaRandom<__COUNTER__, 400>::value + 278))
+#define OB_CALL_RET_P0(R, P, f) obfuscator::ObfuscatedCallRetP<obfuscator::Machine2::Machine, P, R>(MakeAddressFun(f, obfuscator::MetaRandom<__COUNTER__, 400>::value + 278))
 
-#define OBFUSCATED_CALL_P(P, f, ...) andrivet::ADVobfuscator::ObfuscatedCallP<andrivet::ADVobfuscator::Machine2::Machine, P>(MakeObfuscatedAddress(f, andrivet::ADVobfuscator::MetaRandom<__COUNTER__, 400>::value + 278), ##__VA_ARGS__)
-#define OBFUSCATED_CALL_RET_P(R, P, f, ...) andrivet::ADVobfuscator::ObfuscatedCallRetP<andrivet::ADVobfuscator::Machine2::Machine, P, R>(MakeObfuscatedAddress(f, andrivet::ADVobfuscator::MetaRandom<__COUNTER__, 400>::value + 278), ##__VA_ARGS__)
+#define OB_CALL_P(P, f, ...) obfuscator::ObfuscatedCallP<obfuscator::Machine2::Machine, P>(MakeAddressFun(f, obfuscator::MetaRandom<__COUNTER__, 400>::value + 278), ##__VA_ARGS__)
+#define OB_CALL_RET_P(R, P, f, ...) obfuscator::ObfuscatedCallRetP<obfuscator::Machine2::Machine, P, R>(MakeAddressFun(f, obfuscator::MetaRandom<__COUNTER__, 400>::value + 278), ##__VA_ARGS__)
 
 #pragma clang diagnostic pop
 #pragma warning(pop)
-
 
 #endif

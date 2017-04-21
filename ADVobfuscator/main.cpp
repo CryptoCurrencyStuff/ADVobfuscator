@@ -15,7 +15,6 @@
 //
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Get latest version on https://github.com/andrivet/ADVobfuscator
 
 // To remove Boost assert messages
 #if !defined(DEBUG) || DEBUG == 0
@@ -30,59 +29,37 @@
 
 #pragma warning(disable: 4503)
 
-//#define ADVLOG 1
+#define ADVLOG 0
 
 #include <iostream>
-#include "MetaFactorial.h"
-#include "MetaFibonacci.h"
+
 #include "MetaRandom.h"
-#include "MetaString1.h"
-#include "MetaString2.h"
-#include "MetaString3.h"
+//#include "MetaString1.h"
+//#include "MetaString2.h"
+//#include "MetaString3.h"
 #include "MetaString4.h"
 #include "ObfuscatedCall.h"
 #include "DetectDebugger.h"
 #include "ObfuscatedCallWithPredicate.h"
 
 using namespace std;
-using namespace andrivet::ADVobfuscator;
+using namespace obfuscator;
 
-// Demonstrate generation of Factorial at compile time
-void SampleFactorial()
-{
-    cout << "--------------------" << endl;
-    cout << "Computation of factorial entirely at compile-time" << endl;
-    cout << "Factorial(5) = " << Factorial<5>::value << endl;
+#if 0
+extern "C" char* __cxa_demangle(const char* mangled_name, char* buf, size_t* n, int* status) {
+    if (status)
+        *status = -1;
+
+    return nullptr;
+}
+#endif
+
+namespace boost {
+void throw_exception(std::exception const&) {
+}
 }
 
-// Demonstrate generation of Fibonacci sequence at compile time
-void SampleFibonacci()
-{
-    cout << "--------------------" << endl;
-    cout << "Computation of Fibonacci sequence entirely at compile-time" << endl;
-    cout << "Fibonacci(8)  = " << Fibonacci<8>::value << endl;
-    cout << "Fibonacci(20) = " << Fibonacci<20>::value << endl;
-}
-
-// First implementation of obfuscated string
-void SampleEncrypted1()
-{
-    cout << "--------------------" << endl;
-    cout << "Encryption of string literals - version 1 - Fix algorithm, fix key, truncated" << endl;
-    cout << OBFUSCATED1("Britney Spears") << endl;
-    cout << OBFUSCATED1("Miley Cyrus") << endl;
-    cout << OBFUSCATED1("Katy Perry") << endl;
-}
-
-// Second implementation of obfuscated string
-void SampleEncrypted2()
-{
-    cout << "--------------------" << endl;
-    cout << "Encryption of string literals - version 2 - Fix algorithm, fix key, not truncated" << endl;
-    cout << OBFUSCATED2("Britney Spears") << endl;
-    cout << OBFUSCATED2("Miley Cyrus") << endl;
-    cout << OBFUSCATED2("Katy Perry") << endl;
-}
+#if 0
 
 // Generate a sequence of random numbers [0..10) at runtime
 void SampleMetaRandom()
@@ -90,7 +67,6 @@ void SampleMetaRandom()
     // Do not use a loop, it will not work (it will print 10 times the same number):
     // loops are executed at run-time,
     // we want to generate 10 different numbers are compile-time.
-    cout << "--------------------" << endl;
     cout << "Generate random numbers in range [0..10) at compile-time" << endl;
     cout << MetaRandom<__COUNTER__, 10>::value << endl;
     cout << MetaRandom<__COUNTER__, 10>::value << endl;
@@ -104,10 +80,29 @@ void SampleMetaRandom()
     cout << MetaRandom<__COUNTER__, 10>::value << endl;
 }
 
-// Third implementation of obfuscated string
-void SampleEncryped3()
+// First implementation of obfuscated string
+void SampleEncrypted1()
 {
-    cout << "--------------------" << endl;
+    cout << "Encryption of string literals - version 1 - Fix algorithm, fix key, truncated" << endl;
+    cout << OBFUSCATED1("Britney Spears") << endl;
+    cout << OBFUSCATED1("Miley Cyrus") << endl;
+    cout << OBFUSCATED1("Katy Perry") << endl;
+}
+
+// Second implementation of obfuscated string
+void SampleEncrypted2()
+{
+    cout << "Encryption of string literals - version 2 - Fix algorithm, fix key, not truncated" << endl;
+    cout << OBFUSCATED2("Britney Spears") << endl;
+    cout << OBFUSCATED2("Miley Cyrus") << endl;
+    cout << OBFUSCATED2("Katy Perry") << endl;
+
+    cout << OB22("Test") << endl;
+}
+
+// Third implementation of obfuscated string
+void SampleEncrypted3()
+{
     cout << "Encryption of string literals - version 3 - Fix algorithm, random key" << endl;
     cout << OBFUSCATED3("Britney Spears")<< endl;
     cout << OBFUSCATED3("Miley Cyrus") << endl;
@@ -115,91 +110,97 @@ void SampleEncryped3()
 }
 
 // Fourth and final implementation of obfuscated string
-void SampleEncryped4()
+void SampleEncrypted4()
 {
-    cout << "--------------------" << endl;
     cout << "Encryption of string literals - version 4 - Random algorithm, random key" << endl;
     cout << OBFUSCATED4("Britney Spears") << endl;
     cout << OBFUSCATED4("Britney Spears") << endl;
     cout << OBFUSCATED4("Britney Spears") << endl;
     cout << OBFUSCATED4("Britney Spears") << endl;
 }
+#endif
+
+#define CAT(x, y) CAT_(x, y)
+#define CAT_(x, y) x ## y
+
+#define MK_NM(p) CAT(p,__COUNTER__)
+
+#define OB_NM MK_NM(p)
+namespace OB_NM {
+    static const char abcd[5] = "abcd";
+}
 
 // Fourth implementation of obfuscated string
 // Declaration and usage are separated
-void SampleEncryped4_differed()
+void SampleEncrypted4_differed()
 {
-    cout << "--------------------" << endl;
-    cout << "Encryption of string literals - version 4 - Separated declaration and usage" << endl;
+    cout << "Encryption of string literals - version 4 - Separated declaration and usage" << '\n';
 
-    auto miley   = DEF_OBFUSCATED4("Miley Cyrus");
-    auto britney = DEF_OBFUSCATED4("Britney Spears");
-    auto katy    = DEF_OBFUSCATED4("Katy Perry");
+    auto mo = DEF_OBFUSCATED4("UnraveledVisage");
+    auto bo = DEF_OBFUSCATED4("AbstractReflection");
 
-    cout << britney.decrypt() << endl;
-    cout << katy.decrypt()    << endl;
-    cout << miley.decrypt()   << endl;
+    cout << mo.decrypt() << '\n' << 
+        bo.decrypt() << ' ' << '\n';
 }
 
-void SampleFiniteStateMachine_function_to_protect()
+void SampleFSM_obfun()
 {
-    cout << OBFUSCATED4("Womenizer") << endl;
+    //constexpr char w[] = "BadPerson";
+    cout << OBFUSCATED4("DeterminedGaze") << '\n';
 }
 
-int SampleFiniteStateMachine_function_to_protect_with_parameter(const char* text1, const char* text2)
+int SampleFSM_obfun_with_params(const char* text1, const char* text2)
 {
-    cout << OBFUSCATED4("Oops I ") << text1 << OBFUSCATED4(" it ") << text2 << endl;
+    constexpr char o[] = "Oops I ";
+    constexpr char i[] = " it ";
+
+    cout << OBFUSCATED4(o) << text1 << OBFUSCATED4(i) << text2 << '\n';
     return 12345;
 }
 
 // Obfuscate function calls
-void SampleFiniteStateMachine1()
+void SampleFSM1()
 {
-    using namespace andrivet::ADVobfuscator::Machine1;
+    using namespace obfuscator::Machine1;
 
-    cout << "--------------------" << endl;
-    cout << "Obfuscate calls by using a finite state machine" << endl;
+    cout << "Call a function with no parameters and no return value" << '\n';
+    OB_CALL0(SampleFSM_obfun);
 
-    cout << "Call a function without parameters and without returning a value" << endl;
-    OBFUSCATED_CALL0(SampleFiniteStateMachine_function_to_protect);
+    constexpr char a[] = "again";
+    constexpr char d[] = "did";
 
-    cout << "Call a function with a parameter and returning a value" << endl;
-    auto result = OBFUSCATED_CALL_RET(int, SampleFiniteStateMachine_function_to_protect_with_parameter, OBFUSCATED4("did"), OBFUSCATED4("again"));
-    cout << "Result: " << result << endl;
+    cout << "Call a function with a parameter and return a value" << '\n';
+    auto result = OB_CALL_RET(int, SampleFSM_obfun_with_params, OBFUSCATED4(d), OBFUSCATED4(a));
+    cout << "Result: " << result << '\n';
 }
 
-void SampleFiniteStateMachine_important_function_in_the_application()
+void Sample_guarded_function()
 {
-    cout << OBFUSCATED4("PRISM") << endl;
+    cout << OBFUSCATED4("PRISM") << '\n';
 }
 
 // Predicate
 struct DetectDebugger { bool operator()() { return AmIBeingDebugged(); } };
 
 // Obfuscate functions calls. Behaviour is dependent of a runtime value (debugger detected or not)
-void SampleFiniteStateMachine2()
+void SampleFSM2()
 {
-    cout << "--------------------" << endl;
-    cout << "Obfuscate calls by using a finite state machine and detect if a debugger is there or not" << endl;
-
-    cout << "Call a function without parameters and without returning a value" << endl;
-    cout << "It will only be called if a debugger is NOT detected" << endl;
-    OBFUSCATED_CALL_P0(DetectDebugger, SampleFiniteStateMachine_important_function_in_the_application);
+    cout << "Call a function without parameters and without returning a value" << '\n' <<
+        "It will only be called if a debugger is NOT detected" << '\n';
+    OB_CALL_P0(DetectDebugger, Sample_guarded_function);
 }
 
 // Entry point
 int main(int, const char *[])
 {
-    SampleFactorial();
-    SampleFibonacci();
-    SampleMetaRandom();
-    SampleEncrypted1();
-    SampleEncrypted2();
-    SampleEncryped3();
-    SampleEncryped4();
-    SampleEncryped4_differed();
-    SampleFiniteStateMachine1();
-    SampleFiniteStateMachine2();
+    //SampleMetaRandom();
+    //SampleEncrypted1();
+    //SampleEncrypted2();
+    //SampleEncrypted3();
+    //SampleEncrypted4();
+    SampleEncrypted4_differed();
+    SampleFSM1();
+    SampleFSM2();
 
     return 0;
 }
@@ -207,3 +208,4 @@ int main(int, const char *[])
 #if defined(__GNUC__)
 #pragma GCC pop_options
 #endif
+

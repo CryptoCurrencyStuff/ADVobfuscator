@@ -15,7 +15,6 @@
 //
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Get latest version on https://github.com/andrivet/ADVobfuscator
 
 #ifndef ObfuscatedCall_h
 #define ObfuscatedCall_h
@@ -27,7 +26,8 @@
 // In this example, the target is called at the end of the FSM so it can be located.
 // In production, it would be better to put it in the middle of the FSM with some computing triggering it.
 
-namespace andrivet { namespace ADVobfuscator { namespace Machine1 {
+namespace obfuscator { 
+namespace Machine1 {
 
     // Finite State Machine
     // E: Event associated with target
@@ -113,7 +113,8 @@ namespace andrivet { namespace ADVobfuscator { namespace Machine1 {
         R result_;
     };
 
-}}}
+}
+} // namespace 
 
 
 #pragma warning(push)
@@ -121,14 +122,14 @@ namespace andrivet { namespace ADVobfuscator { namespace Machine1 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
 
-#define OBFUSCATED_CALL0(f) andrivet::ADVobfuscator::ObfuscatedCall<andrivet::ADVobfuscator::Machine1::Machine>(MakeObfuscatedAddress(f, andrivet::ADVobfuscator::MetaRandom<__COUNTER__, 400>::value + 278))
-#define OBFUSCATED_CALL_RET0(R, f) andrivet::ADVobfuscator::ObfuscatedCallRet<andrivet::ADVobfuscator::Machine1::Machine, R>(MakeObfuscatedAddress(f, andrivet::ADVobfuscator::MetaRandom<__COUNTER__, 400>::value + 278))
+#define OB_CALL0(f) obfuscator::ObfuscatedCall<obfuscator::Machine1::Machine>(MakeAddressFun(f, obfuscator::MetaRandom<__COUNTER__, 400>::value + 278))
+#define OB_CALL_RET0(R, f) obfuscator::ObfuscatedCallRet<obfuscator::Machine1::Machine, R>(MakeAddressFun(f, obfuscator::MetaRandom<__COUNTER__, 400>::value + 278))
 
-#define OBFUSCATED_CALL(f, ...) andrivet::ADVobfuscator::ObfuscatedCall<andrivet::ADVobfuscator::Machine1::Machine>(MakeObfuscatedAddress(f, andrivet::ADVobfuscator::MetaRandom<__COUNTER__, 400>::value + 278), __VA_ARGS__)
-#define OBFUSCATED_CALL_RET(R, f, ...) andrivet::ADVobfuscator::ObfuscatedCallRet<andrivet::ADVobfuscator::Machine1::Machine, R>(MakeObfuscatedAddress(f, andrivet::ADVobfuscator::MetaRandom<__COUNTER__, 400>::value + 278), __VA_ARGS__)
+#define OB_CALL(f, ...) obfuscator::ObfuscatedCall<obfuscator::Machine1::Machine>(MakeAddressFun(f, obfuscator::MetaRandom<__COUNTER__, 400>::value + 278), __VA_ARGS__)
+#define OB_CALL_RET(R, f, ...) obfuscator::ObfuscatedCallRet<obfuscator::Machine1::Machine, R>(MakeAddressFun(f, obfuscator::MetaRandom<__COUNTER__, 400>::value + 278), __VA_ARGS__)
 
 #pragma clang diagnostic pop
 #pragma warning(pop)
 
-
 #endif
+

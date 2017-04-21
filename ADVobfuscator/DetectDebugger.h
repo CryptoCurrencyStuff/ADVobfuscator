@@ -9,20 +9,6 @@
 #ifndef ADVobfuscator_DetectDebugger_h
 #define ADVobfuscator_DetectDebugger_h
 
-#ifdef __APPLE__
-
 bool AmIBeingDebugged();
-
-#else
-
-// Only Apple platforms are implemented in this example. Other platforms are simulated (not debugged)
-
-bool AmIBeingDebugged()
-{
-    return false;
-}
-
-#endif
-
 
 #endif
